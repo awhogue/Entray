@@ -1,7 +1,9 @@
 package org.secondthought.entray;
 
+import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -17,6 +19,19 @@ public class CreateNotificationActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_notification);
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if ("text/plain".equals(type)) {
+                String text = intent.getStringExtra(Intent.EXTRA_TEXT);
+                if (null != text) {
+                    createNotification(text);
+                }
+            }
+            this.finish();
+        }
     }
 
     @Override
@@ -40,15 +55,19 @@ public class CreateNotificationActivity extends ActionBarActivity {
      */
     public void createNotification(View view) {
         EditText editText = (EditText) findViewById(R.id.edit_message);
+        createNotification(editText.getText().toString());
+        editText.setText("");
+    }
+
+    public void createNotification(String text) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_action_accept)
                         .setContentTitle("Entray")
-                        .setContentText(editText.getText().toString());
+                        .setContentText(text);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         mNotificationManager.notify(0, mBuilder.build());
-        editText.setText("");
     }
 }
