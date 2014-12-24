@@ -24,7 +24,11 @@ public class CreateNotificationActivity extends ActionBarActivity implements Vie
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
+        if (type != null &&
+                (Intent.ACTION_SEND.equals(action) ||
+                 "com.google.android.gm.action.AUTO_SEND".equals(action))) {
+            Toast.makeText(this, "Got type: " + type, Toast.LENGTH_LONG).show();
+
             if ("text/plain".equals(type)) {
                 String text = intent.getStringExtra(Intent.EXTRA_TEXT);
                 if (null != text) {
