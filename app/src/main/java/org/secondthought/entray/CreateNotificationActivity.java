@@ -1,8 +1,8 @@
 package org.secondthought.entray;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -11,7 +11,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 
-public class CreateNotificationActivity extends ActionBarActivity implements View.OnClickListener {
+public class CreateNotificationActivity extends Activity implements View.OnClickListener {
     protected static final int REQUEST_OK = 1;
 
     @Override
