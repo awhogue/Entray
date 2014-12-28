@@ -6,13 +6,17 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
 
 /**
+ * Handle creating notifications.
+ *
  * Created by ahogue on 12/22/14.
  */
 public class NotificationPublisher extends BroadcastReceiver {
@@ -34,7 +38,6 @@ public class NotificationPublisher extends BroadcastReceiver {
         String text = intent.getStringExtra(NOTIFICATION_TEXT);
         int delay = intent.getIntExtra(NOTIFICATION_DELAY, 0);
         int id = intent.getIntExtra(NOTIFICATION_ID, rand.nextInt());
-        Toast.makeText(context, "Notification " + id + " got delay " + delay, Toast.LENGTH_LONG).show();
 
         NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(id);
@@ -45,8 +48,8 @@ public class NotificationPublisher extends BroadcastReceiver {
                             .setSmallIcon(R.drawable.ic_action_accept)
                             .setContentTitle("Entray")
                             .setContentText(text)
-                            .addAction(R.drawable.ic_action_alarms, "1 hour", makePostponeIntent(context, 60*60*1000, text, id))
-                            .addAction(R.drawable.ic_action_alarms, "1 day", makePostponeIntent(context, 24*60*60*1000, text, id));
+                            .addAction(R.drawable.ic_action_alarms, "1 hour", makePostponeIntent(context, 60 * 60 * 1000, text, id))
+                            .addAction(R.drawable.ic_action_alarms, "1 day", makePostponeIntent(context, 24 * 60 * 60 * 1000, text, id));
 
             notificationManager.notify(id, mBuilder.build());
         } else {
@@ -56,9 +59,12 @@ public class NotificationPublisher extends BroadcastReceiver {
             PendingIntent pendingIntent =
                     PendingIntent.getBroadcast(context, rand.nextInt(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            long futureInMillis = SystemClock.elapsedRealtime() + delay;
+            long alarmTimeInMillis = System.currentTimeMillis() + delay;
+            Date date = new Date(alarmTimeInMillis);
+            DateFormat formatter = new SimpleDateFormat("H:mm");
+            Toast.makeText(context, "Delayed until " + formatter.format(date), Toast.LENGTH_LONG).show();
             AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC, alarmTimeInMillis, pendingIntent);
         }
     }
 
