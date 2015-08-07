@@ -45,11 +45,11 @@ public class NotificationPublisher extends BroadcastReceiver {
         if (0 == delay) {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.ic_action_accept)
+                            .setSmallIcon(R.drawable.ic_notification)
                             .setContentTitle("Entray")
                             .setContentText(text)
-                            .addAction(R.drawable.ic_action_alarms, "1 hour", makePostponeIntent(context, 60 * 60 * 1000, text, id))
-                            .addAction(R.drawable.ic_action_alarms, "1 day", makePostponeIntent(context, 24 * 60 * 60 * 1000, text, id));
+                            .addAction(R.drawable.ic_snooze, "1 hour", makePostponeIntent(context, 60 * 60 * 1000, text, id))
+                            .addAction(R.drawable.ic_snooze, "1 day", makePostponeIntent(context, 24 * 60 * 60 * 1000, text, id));
 
             notificationManager.notify(id, mBuilder.build());
         } else {
