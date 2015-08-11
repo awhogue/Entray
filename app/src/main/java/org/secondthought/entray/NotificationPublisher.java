@@ -26,6 +26,15 @@ public class NotificationPublisher extends BroadcastReceiver {
 
     private static Random rand = new Random();
 
+    /**
+     * Schedule a notification to publish after a certain delay.
+     *
+     * @param context Android context.
+     * @param delay How long to wait, in milliseconds.
+     * @param text The notification text.
+     * @param id An ID for the notification.
+     * @return the PendingIntent.
+     */
     private PendingIntent makePostponeIntent(Context context, int delay, String text, int id) {
         Intent postponeIntent = new Intent(context, NotificationPublisher.class);
         postponeIntent.putExtra(NotificationPublisher.NOTIFICATION_DELAY, delay);
@@ -34,12 +43,22 @@ public class NotificationPublisher extends BroadcastReceiver {
         return PendingIntent.getBroadcast(context, rand.nextInt(), postponeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
+    /**
+     * Handle an incoming intent to schedule a notification.
+     *
+     * Text is expected in the NOTIFICATION_TEXT extra string.
+     * Additionally, a delay may be specified using NOTIFICATION_DELAY.
+     *
+     * @param context Android context.
+     * @param intent Android intent.
+     */
     public void onReceive(Context context, Intent intent) {
         String text = intent.getStringExtra(NOTIFICATION_TEXT);
         int delay = intent.getIntExtra(NOTIFICATION_DELAY, 0);
         int id = intent.getIntExtra(NOTIFICATION_ID, rand.nextInt());
 
-        NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationManager notificationManager =
+                (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(id);
 
         if (0 == delay) {
@@ -48,8 +67,10 @@ public class NotificationPublisher extends BroadcastReceiver {
                             .setSmallIcon(R.drawable.ic_notification)
                             .setContentTitle("Entray")
                             .setContentText(text)
-                            .addAction(R.drawable.ic_snooze, "1 hour", makePostponeIntent(context, 60 * 60 * 1000, text, id))
-                            .addAction(R.drawable.ic_snooze, "1 day", makePostponeIntent(context, 24 * 60 * 60 * 1000, text, id));
+                            .addAction(R.drawable.ic_snooze, "1 hour",
+                                    makePostponeIntent(context, 60 * 60 * 1000, text, id))
+                            .addAction(R.drawable.ic_snooze, "1 day",
+                                    makePostponeIntent(context, 24 * 60 * 60 * 1000, text, id));
 
             notificationManager.notify(id, mBuilder.build());
         } else {
@@ -57,7 +78,8 @@ public class NotificationPublisher extends BroadcastReceiver {
             notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TEXT, text);
             notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
             PendingIntent pendingIntent =
-                    PendingIntent.getBroadcast(context, rand.nextInt(), notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    PendingIntent.getBroadcast(context, rand.nextInt(), notificationIntent,
+                            PendingIntent.FLAG_UPDATE_CURRENT);
 
             long alarmTimeInMillis = System.currentTimeMillis() + delay;
             Date date = new Date(alarmTimeInMillis);

@@ -14,6 +14,10 @@ import java.util.ArrayList;
 public class CreateNotificationActivity extends Activity implements View.OnClickListener {
     protected static final int REQUEST_OK = 1;
 
+    /**
+     * Set up voice handling and handle SEND intents.
+     * {@inheritDoc}
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +43,7 @@ public class CreateNotificationActivity extends Activity implements View.OnClick
 
     /**
      * Create a notification with the user's text.
+     *
      * @param view The containing view.
      */
     public void createNotification(View view) {
@@ -47,12 +52,21 @@ public class CreateNotificationActivity extends Activity implements View.OnClick
         editText.setText("");
     }
 
+    /**
+     * Send an intent to create a notification to the NotificationPublisher.
+     *
+     * @param text The text of the notification.
+     */
     public void createNotification(String text) {
         Intent notificationIntent = new Intent(this, NotificationPublisher.class);
         notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TEXT, text);
         sendBroadcast(notificationIntent);
     }
 
+    /**
+     * Speech input handling.
+     * {@inheritDoc}
+     */
     @Override
     public void onClick(View v) {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -64,6 +78,10 @@ public class CreateNotificationActivity extends Activity implements View.OnClick
         }
     }
 
+    /**
+     * Handle the result of speech input.
+     * {@inheritDoc}
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
