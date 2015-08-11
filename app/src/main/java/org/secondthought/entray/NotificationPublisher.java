@@ -24,6 +24,7 @@ public class NotificationPublisher extends BroadcastReceiver {
     public static String NOTIFICATION_ID = "notification-id";
     public static String NOTIFICATION_TEXT = "notification-text";
     public static String NOTIFICATION_DELAY = "notification-delay";
+    public static String NOTIFICATION_VIBRATE = "notification-vibrate";
 
     private static Random rand = new Random();
 
@@ -59,6 +60,7 @@ public class NotificationPublisher extends BroadcastReceiver {
         String text = intent.getStringExtra(NOTIFICATION_TEXT);
         int delay = intent.getIntExtra(NOTIFICATION_DELAY, 0);
         int id = intent.getIntExtra(NOTIFICATION_ID, rand.nextInt());
+        boolean vibrate = intent.getBooleanExtra(NOTIFICATION_VIBRATE, false);
 
         ParsedNotification parsedNotification = NotificationParser.parse(text);
         Log.v(TAG, "Parsed: " + parsedNotification);
@@ -82,6 +84,10 @@ public class NotificationPublisher extends BroadcastReceiver {
                             .addAction(R.drawable.ic_snooze, "1 day",
                                     makePostponeIntent(context, 24 * 60 * 60 * 1000, text, id));
 
+            if (vibrate) {
+                mBuilder.setVibrate(new long[] {0, 200, 100, 200, 100, 200});
+            }
+
             notificationManager.notify(id, mBuilder.build());
         } else {
             scheduleFutureNotification(context, id, text, System.currentTimeMillis() + delay);
@@ -97,8 +103,9 @@ public class NotificationPublisher extends BroadcastReceiver {
      */
     private void scheduleFutureNotification(Context context, Integer id, String text, long timeInMillis) {
         Intent notificationIntent = new Intent(context, NotificationPublisher.class);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TEXT, text);
-        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
+        notificationIntent.putExtra(NOTIFICATION_TEXT, text);
+        notificationIntent.putExtra(NOTIFICATION_ID, id);
+        notificationIntent.putExtra(NOTIFICATION_VIBRATE, true);
         PendingIntent pendingIntent =
                 PendingIntent.getBroadcast(context, rand.nextInt(), notificationIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
