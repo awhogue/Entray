@@ -18,6 +18,10 @@ public class ParsedNotification {
         this.dateTime = dateTime;
     }
 
+    public String toString() {
+        return "[" + this.notificationText + "] at " + this.dateTime;
+    }
+
     public String getOriginal() {
         return original;
     }
@@ -40,5 +44,9 @@ public class ParsedNotification {
 
     public void setDateTime(DateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public boolean hasDateTime() {
+        return (null != this.dateTime);
     }
 }

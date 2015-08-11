@@ -18,7 +18,12 @@ public class NotificationParserTest extends TestCase {
         assertEquals(parsedTime, parsed.getDateTime());
     }
 
-    public void testParse() {
+    public void testParseNoDate() {
+        testOne("Buy milk", "Buy milk", null);
+        testOne(" Buy milk ", "Buy milk", null);
+    }
+
+    public void testParseWithDate() {
         testOne("Buy milk 830pm", "Buy milk", new DateTime(2015, 8, 7, 20, 30, 0));
         testOne("Buy milk 8:30pm", "Buy milk", new DateTime(2015, 8, 7, 20, 30, 0));
         testOne("Buy milk 17:30", "Buy milk", new DateTime(2015, 8, 7, 17, 30, 0));

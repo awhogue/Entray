@@ -7,11 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.joda.time.DateTime;
 import java.util.Random;
 
 /**
@@ -20,6 +19,8 @@ import java.util.Random;
  * Created by ahogue on 12/22/14.
  */
 public class NotificationPublisher extends BroadcastReceiver {
+    private static final String TAG = "NotificationPublisher";
+
     public static String NOTIFICATION_ID = "notification-id";
     public static String NOTIFICATION_TEXT = "notification-text";
     public static String NOTIFICATION_DELAY = "notification-delay";
@@ -53,15 +54,24 @@ public class NotificationPublisher extends BroadcastReceiver {
      * @param intent Android intent.
      */
     public void onReceive(Context context, Intent intent) {
+        Log.v(TAG, "NotificatioParser.onReceive()");
+
         String text = intent.getStringExtra(NOTIFICATION_TEXT);
         int delay = intent.getIntExtra(NOTIFICATION_DELAY, 0);
         int id = intent.getIntExtra(NOTIFICATION_ID, rand.nextInt());
+
+        ParsedNotification parsedNotification = NotificationParser.parse(text);
+        Log.v(TAG, "Parsed: " + parsedNotification);
 
         NotificationManager notificationManager =
                 (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(id);
 
-        if (0 == delay) {
+        if (parsedNotification.hasDateTime()) {
+            scheduleFutureNotification(context, id,
+                    parsedNotification.getNotificationText(),
+                    parsedNotification.getDateTime().getMillis());
+        } else if (0 == delay) {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(context)
                             .setSmallIcon(R.drawable.ic_notification)
@@ -74,20 +84,28 @@ public class NotificationPublisher extends BroadcastReceiver {
 
             notificationManager.notify(id, mBuilder.build());
         } else {
-            Intent notificationIntent = new Intent(context, NotificationPublisher.class);
-            notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TEXT, text);
-            notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
-            PendingIntent pendingIntent =
-                    PendingIntent.getBroadcast(context, rand.nextInt(), notificationIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-
-            long alarmTimeInMillis = System.currentTimeMillis() + delay;
-            Date date = new Date(alarmTimeInMillis);
-            DateFormat formatter = new SimpleDateFormat("H:mm");
-            Toast.makeText(context, "Delayed until " + formatter.format(date), Toast.LENGTH_LONG).show();
-            AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-            alarmManager.setExact(AlarmManager.RTC, alarmTimeInMillis, pendingIntent);
+            scheduleFutureNotification(context, id, text, System.currentTimeMillis() + delay);
         }
     }
 
+    /**
+     * Schedule a notification at a time in the future.
+     * @param context Android context.
+     * @param id Notification id.
+     * @param text The notification text.
+     * @param timeInMillis Time to send notification, in millis since the epoch.
+     */
+    private void scheduleFutureNotification(Context context, Integer id, String text, long timeInMillis) {
+        Intent notificationIntent = new Intent(context, NotificationPublisher.class);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_TEXT, text);
+        notificationIntent.putExtra(NotificationPublisher.NOTIFICATION_ID, id);
+        PendingIntent pendingIntent =
+                PendingIntent.getBroadcast(context, rand.nextInt(), notificationIntent,
+                        PendingIntent.FLAG_UPDATE_CURRENT);
+
+        DateTime dt = new DateTime(timeInMillis);
+        Toast.makeText(context, text + " scheduled for " + dt.toString("E h:mma"), Toast.LENGTH_LONG).show();
+        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.setExact(AlarmManager.RTC, timeInMillis, pendingIntent);
+    }
 }

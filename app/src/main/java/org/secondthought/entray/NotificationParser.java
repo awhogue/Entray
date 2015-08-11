@@ -56,7 +56,7 @@ public class NotificationParser {
                 return new ParsedNotification(input, notificationText, adjusted);
             }
         } else {
-            return new ParsedNotification(input, input, now);
+            return new ParsedNotification(input, input.trim(), null);
         }
     }
 }
