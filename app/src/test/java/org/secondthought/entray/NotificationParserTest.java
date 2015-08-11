@@ -5,15 +5,15 @@ import junit.framework.TestCase;
 import org.joda.time.DateTime;
 
 /**
- * Test for TimeParser.
+ * Test for NotificationParser.
  *
  * Created by ahogue on 8/7/15.
  */
-public class TimeParserTest extends TestCase {
+public class NotificationParserTest extends TestCase {
     private static DateTime now = new DateTime(2015, 8, 7, 15, 30, 0, 0);
 
     private void testOne(String input, String notification, DateTime parsedTime) {
-        ParsedNotification parsed = TimeParser.parse(input, now);
+        ParsedNotification parsed = org.secondthought.entray.NotificationParser.parse(input, now);
         assertEquals(notification, parsed.getNotificationText());
         assertEquals(parsedTime, parsed.getDateTime());
     }
