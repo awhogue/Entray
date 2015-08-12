@@ -11,7 +11,18 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 
 public class NotificationParser {
-    private static Pattern timeRegex = Pattern.compile("(?i)(.*?)(?:at +|@ *)?(1?\\d):?(\\d\\d)?(am|pm)?(.*?)");
+    private static Pattern timeRegex =
+            Pattern.compile(
+                    "^(.*?)" +           // Prefix (can be empty)
+                    "(?:at +|@ *)?" +    // "at" time (non-capturing)
+                    "(1?\\d)" +          // Hour
+                    ":?" +               // Hour/minute separator
+                    "(\\d\\d)?" +        // Minute
+                    "(am|pm)?" +         // AM/PM
+                    " ?(tomorrow)?" +    // Day
+                    ":?" +               // Possible suffix intro (e.g. "8pm: buy milk")
+                    "(.*)$",             // Suffix (can be empty)
+                    Pattern.CASE_INSENSITIVE);
 
     /**
      * Attempts to parse a time out of the given input. If no time is found, returns the current time.
@@ -38,12 +49,22 @@ public class NotificationParser {
             if (null != m.group(3)) {
                 minute = Integer.parseInt(m.group(3));
             }
+
+            // Parse out day.
+            Integer addDays = 0;
+            if (null != m.group(5)) {
+                String dayMod = m.group(5).toLowerCase();
+                if (dayMod.equals("tomorrow")) {
+                    addDays = 1;
+                }
+            }
+
             if (null != m.group(4)) {
                 String ampm = m.group(4).toLowerCase();
                 if (ampm.equals("pm")) {
                     hour += 12;
                 }
-            } else if (hour < 12) {
+            } else if (0 == addDays && hour < 12) {
                 // If am/pm isn't specified, and the hour is an hour still coming up today, treat it as such.
                 // E.g. if it's 3pm and the input says "430", treat that as 4:30pm today rather than 4:30am tomorrow.
                 // Put another way, always find the *next* available 4:30.
@@ -53,14 +74,19 @@ public class NotificationParser {
             }
 
             // Notification text is what's left once we've pulled out the parsed date.
-            String notificationText = (m.group(1) + " " + m.group(5)).trim();
+            String notificationText = (m.group(1) + " " + m.group(6)).trim();
 
-            DateTime adjusted = now.withHourOfDay(hour).withMinuteOfHour(minute);
-            if (adjusted.isBefore(now)) {
-                // If the new time is before now, then we looped over a midnight, so we increment the day.
-                return new ParsedNotification(input, notificationText, adjusted.plusDays(1));
+            if (0 != addDays) {
+                return new ParsedNotification(input, notificationText,
+                        now.plusDays(addDays).withHourOfDay(hour).withMinuteOfHour(minute));
             } else {
-                return new ParsedNotification(input, notificationText, adjusted);
+                DateTime adjusted = now.withHourOfDay(hour).withMinuteOfHour(minute);
+                if (adjusted.isBefore(now)) {
+                    // If the new time is before now, then we looped over a midnight, so we increment the day.
+                    return new ParsedNotification(input, notificationText, adjusted.plusDays(1));
+                } else {
+                    return new ParsedNotification(input, notificationText, adjusted);
+                }
             }
         } else {
             return new ParsedNotification(input, input.trim(), null);

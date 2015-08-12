@@ -47,4 +47,27 @@ public class NotificationParserTest extends TestCase {
         testOne(afternoon, "Buy milk @1pm",     "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
         testOne(afternoon, "Buy milk @ 1pm",    "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
     }
+
+    public void testTomorrow() {
+        testOne(afternoon, "Buy milk 830pm tomorrow",   "Buy milk", new DateTime(2015, 8, 8, 20, 30, 0));
+        testOne(afternoon, "Buy milk 8:30pm tomorrow",  "Buy milk", new DateTime(2015, 8, 8, 20, 30, 0));
+        testOne(afternoon, "Buy milk 17:30 tomorrow",   "Buy milk", new DateTime(2015, 8, 8, 17, 30, 0));
+        testOne(afternoon, "Buy milk 7:30 tomorrow",    "Buy milk", new DateTime(2015, 8, 8, 7,  30, 0));
+        testOne(morning,   "Buy milk 11:30 tomorrow",   "Buy milk", new DateTime(2015, 8, 8, 11, 30, 0));
+        testOne(morning,   "Buy milk 11:30pm tomorrow", "Buy milk", new DateTime(2015, 8, 8, 23, 30, 0));
+        testOne(morning,   "Buy milk 2:30pm tomorrow",  "Buy milk", new DateTime(2015, 8, 8, 14, 30, 0));
+        testOne(morning,   "Buy milk 2:30 tomorrow",    "Buy milk", new DateTime(2015, 8, 8, 2,  30, 0));
+        testOne(morning,   "Buy milk 8:30am tomorrow",  "Buy milk", new DateTime(2015, 8, 8, 8,  30, 0));
+        testOne(afternoon, "Buy milk 7:30 tomorrow",    "Buy milk", new DateTime(2015, 8, 8, 7,  30, 0));
+        testOne(afternoon, "Buy milk 7:30am tomorrow",  "Buy milk", new DateTime(2015, 8, 8, 7,  30, 0));
+        testOne(afternoon, "Buy milk 730am tomorrow",   "Buy milk", new DateTime(2015, 8, 8, 7,  30, 0));
+        testOne(afternoon, "Buy milk 8pm tomorrow",     "Buy milk", new DateTime(2015, 8, 8, 20, 0,  0));
+        testOne(afternoon, "Buy milk 8am tomorrow",     "Buy milk", new DateTime(2015, 8, 8, 8,  0,  0));
+        testOne(afternoon, "Buy milk 1pm tomorrow",     "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
+    }
+
+    public void testColon() {
+        testOne(afternoon, "1pm: Buy milk",           "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
+        testOne(afternoon, "1pm tomorrow: Buy milk",  "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
+    }
 }
