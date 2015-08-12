@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import org.joda.time.DateTime;
 
 public class NotificationParser {
-    private static Pattern timeRegex = Pattern.compile("(?i)(.*?)(1?\\d):?(\\d\\d)?(am|pm)?(.*?)");
+    private static Pattern timeRegex = Pattern.compile("(?i)(.*?)(?:at +|@ *)?(1?\\d):?(\\d\\d)?(am|pm)?(.*?)");
 
     /**
      * Attempts to parse a time out of the given input. If no time is found, returns the current time.

@@ -41,4 +41,10 @@ public class NotificationParserTest extends TestCase {
         testOne(afternoon, "Buy milk 8am",     "Buy milk", new DateTime(2015, 8, 8, 8,  0,  0));
         testOne(afternoon, "Buy milk 1pm",     "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
     }
+
+    public void testAt() {
+        testOne(afternoon, "Buy milk at 1pm",   "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
+        testOne(afternoon, "Buy milk @1pm",     "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
+        testOne(afternoon, "Buy milk @ 1pm",    "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
+    }
 }
