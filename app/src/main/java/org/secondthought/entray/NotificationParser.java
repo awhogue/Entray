@@ -68,7 +68,8 @@ public class NotificationParser {
                 // If am/pm isn't specified, and the hour is an hour still coming up today, treat it as such.
                 // E.g. if it's 3pm and the input says "430", treat that as 4:30pm today rather than 4:30am tomorrow.
                 // Put another way, always find the *next* available 4:30.
-                if (hour < now.getHourOfDay() && (hour + 12) > now.getHourOfDay()) {
+                Integer minOfDay = (hour * 60) + minute;
+                if (minOfDay < now.getMinuteOfDay() && (minOfDay + (12 * 60)) > now.getMinuteOfDay()) {
                     hour += 12;
                 }
             }
