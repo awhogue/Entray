@@ -61,8 +61,10 @@ public class NotificationParser {
 
             if (null != m.group(4)) {
                 String ampm = m.group(4).toLowerCase();
-                if (ampm.equals("pm")) {
+                if (ampm.equals("pm") && hour != 12) {
                     hour += 12;
+                } else if (ampm.equals("am") && hour == 12) {
+                    hour = 0;
                 }
             } else if (0 == addDays && hour < 12) {
                 // If am/pm isn't specified, and the hour is an hour still coming up today, treat it as such.

@@ -33,14 +33,16 @@ public class NotificationParserTest extends TestCase {
         testOne(morning,   "Buy milk 11:30pm", "Buy milk", new DateTime(2015, 8, 7, 23, 30, 0));
         testOne(morning,   "Buy milk 2:30pm",  "Buy milk", new DateTime(2015, 8, 7, 14, 30, 0));
         testOne(morning,   "Buy milk 2:30",    "Buy milk", new DateTime(2015, 8, 7, 14, 30, 0));
-        testOne(morning,   "Buy milk 8:30am",  "Buy milk", new DateTime(2015, 8, 8, 8,  30, 0));
+        testOne(morning,   "Buy milk 8:30am",  "Buy milk", new DateTime(2015, 8, 8,  8, 30, 0));
         testOne(afternoon, "Buy milk 7:30",    "Buy milk", new DateTime(2015, 8, 7, 19, 30, 0));
-        testOne(afternoon, "Buy milk 7:30am",  "Buy milk", new DateTime(2015, 8, 8, 7,  30, 0));
-        testOne(afternoon, "Buy milk 730am",   "Buy milk", new DateTime(2015, 8, 8, 7,  30, 0));
-        testOne(afternoon, "Buy milk 8pm",     "Buy milk", new DateTime(2015, 8, 7, 20, 0,  0));
-        testOne(afternoon, "Buy milk 8am",     "Buy milk", new DateTime(2015, 8, 8, 8,  0,  0));
-        testOne(afternoon, "Buy milk 1pm",     "Buy milk", new DateTime(2015, 8, 8, 13, 0,  0));
-        testOne(afternoon, "Buy milk 3:45",    "Buy milk", new DateTime(2015, 8, 7, 15, 45,  0));
+        testOne(afternoon, "Buy milk 7:30am",  "Buy milk", new DateTime(2015, 8, 8,  7, 30, 0));
+        testOne(afternoon, "Buy milk 730am",   "Buy milk", new DateTime(2015, 8, 8,  7, 30, 0));
+        testOne(afternoon, "Buy milk 8pm",     "Buy milk", new DateTime(2015, 8, 7, 20,  0, 0));
+        testOne(afternoon, "Buy milk 8am",     "Buy milk", new DateTime(2015, 8, 8,  8,  0, 0));
+        testOne(afternoon, "Buy milk 1pm",     "Buy milk", new DateTime(2015, 8, 8, 13,  0, 0));
+        testOne(afternoon, "Buy milk 3:45",    "Buy milk", new DateTime(2015, 8, 7, 15, 45, 0));
+        testOne(morning,   "Buy milk 12pm",    "Buy milk", new DateTime(2015, 8, 7, 12,  0, 0));
+        testOne(morning,   "Buy milk 12am",    "Buy milk", new DateTime(2015, 8, 8,  0,  0, 0));
     }
 
     public void testAt() {
